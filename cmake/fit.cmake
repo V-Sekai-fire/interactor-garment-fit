@@ -18,6 +18,13 @@ endif()
 
 set(FIT_REPO "${CMAKE_CURRENT_LIST_DIR}/..")
 get_filename_component(FIT_REPO "${FIT_REPO}" ABSOLUTE)
+# The runtime and the shared headers are sibling checkouts in the manifest layout.
+if(NOT DEFINED GUEST_RUNTIME_ROOT)
+    get_filename_component(GUEST_RUNTIME_ROOT "${FIT_REPO}/../../2-contract/guest-runtime" ABSOLUTE)
+endif()
+if(NOT DEFINED GUEST_COMMON_ROOT)
+    get_filename_component(GUEST_COMMON_ROOT "${FIT_REPO}/../../2-contract/guest-common" ABSOLUTE)
+endif()
 
 # --- the org forks, from tools/fit/prepare_forks.sh ------------------------------
 # polysolve comes from the patched worktree (embedded specs); the others are
@@ -66,7 +73,7 @@ set(POLYFEM_WITH_CCACHE OFF CACHE BOOL "" FORCE)
 set(POLYFEM_WITH_GARMENT ON CACHE BOOL "" FORCE)
 set(FIT_KERNELS_PENDING OFF CACHE BOOL "" FORCE)
 set(FIT_KERNELS_DIR "${FIT_REPO}/kernels/fit/cpp" CACHE PATH "" FORCE)
-set(FIT_SLANG_PRELUDE_DIR "${FIT_REPO}/guest/avbd/slang-rt" CACHE PATH "" FORCE)
+set(FIT_SLANG_PRELUDE_DIR "${GUEST_RUNTIME_ROOT}/guest/avbd/slang-rt" CACHE PATH "" FORCE)
 set(POLYSOLVE_WITH_CHOLMOD OFF CACHE BOOL "" FORCE)
 set(POLYSOLVE_WITH_MKL OFF CACHE BOOL "" FORCE)
 set(POLYSOLVE_WITH_SPECTRA OFF CACHE BOOL "" FORCE)
@@ -137,11 +144,11 @@ add_library(fit_core STATIC
     "${FIT_REPO}/guest/fit/fit_tools.cpp"
     "${FIT_REPO}/guest/fit/fit_probes.cpp"
     "${FIT_EMBED_CPP}")
-target_include_directories(fit_core PUBLIC "${FIT_REPO}/guest/fit")
+target_include_directories(fit_core PUBLIC "${FIT_REPO}/guest/fit" "${GUEST_COMMON_ROOT}/guest")
 target_link_libraries(fit_core PUBLIC polyfem)
 
 # --- fit.elf --------------------------------------------------------------------------
-add_stage_elf(${FIT_ELF} guest/fit/main.cpp)
+add_stage_elf(${FIT_ELF} "${FIT_REPO}/guest/fit/main.cpp")
 target_link_libraries(${FIT_ELF} PRIVATE fit_core)
 target_compile_options(${FIT_ELF} PRIVATE -ffp-contract=off)
 # Every file open in the ELF is counted and refused with EACCES
