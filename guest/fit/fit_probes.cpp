@@ -1,7 +1,7 @@
 // fit_probes: see fit_probes.h.
 #include "fit_probes.h"
 
-#include "../common/blake3.h"
+#include "common/blake3.h"
 
 #include <polyfem/utils/Logger.hpp>
 #include <polysolve/linear/Solver.hpp>
