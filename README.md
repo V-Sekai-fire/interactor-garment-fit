@@ -1,5 +1,20 @@
 # interactor-garment-fit
 
-The fit stage as a godot-sandbox guest: cloth-fit's PolyFEM garment solve with the Lean SDF sampler.
+The garment fit stage as a godot-sandbox guest: an intersection-free retargeting solve with a signed-distance sampler emitted from Lean.
 
-Split out of `interactor-dress-on` at `310b52e` with its history (`git subtree`). It sits at `3-interactor/garment-fit` in the goal manifest (`contract-manifest-taskweft`), and finds the repositories it builds against as sibling checkouts at their manifest paths. `transport-meshing-pen` builds the guest ELFs (`build.sh`, `tools/build.exs`).
+## What it is for
+
+It fits a garment onto a body inside a sandbox guest, running the vendored retargeting solver one
+phase per call, and the same sources build natively as the reference the guest is held to. The
+signed-distance spline sampler the solver uses is written and checked in Lean, then emitted to
+C++ and Slang under `kernels/`.
+
+## Build
+
+There is no standalone build. `transport-meshing-pen` builds the guest from a workspace checkout,
+which places this repository beside the guest runtime and headers it links (RFD 2294).
+
+## Licence
+
+No licence is stated for this repository as a whole. The vendored solver is MIT; see
+`vendor/cloth-fit/LICENSE`.
