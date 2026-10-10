@@ -16,5 +16,4 @@ which places this repository beside the guest runtime and headers it links (RFD 
 
 ## Licence
 
-No licence is stated for this repository as a whole. The vendored solver is MIT; see
-`vendor/cloth-fit/LICENSE`.
+MIT. See [LICENSE](LICENSE). The vendored solver is MIT; see `vendor/cloth-fit/LICENSE`.
