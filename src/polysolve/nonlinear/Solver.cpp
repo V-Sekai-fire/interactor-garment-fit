@@ -22,6 +22,13 @@
 #include <iomanip>
 #include <fstream>
 
+#ifdef POLYSOLVE_EMBEDDED_SPECS
+// Rules compiled into the binary instead of read from the build machine's
+// source tree (a sandboxed guest has no files). The embedder defines it:
+// returns the NUL-terminated JSON text for a spec file name, or nullptr.
+extern "C" const char *polysolve_embedded_spec(const char *name);
+#endif
+
 namespace polysolve::nonlinear
 {
     namespace
@@ -121,6 +128,12 @@ namespace polysolve::nonlinear
         jse::JSE jse;
 
         jse.strict = strict_validation;
+#ifdef POLYSOLVE_EMBEDDED_SPECS
+        if (const char *text = polysolve_embedded_spec("nonlinear-solver-spec.json"))
+            rules = json::parse(text);
+        else
+            log_and_throw_error(logger, "no embedded {} rules", "nonlinear-solver-spec.json");
+#else
         const std::string input_spec = POLYSOLVE_NON_LINEAR_SPEC;
         std::ifstream file(input_spec);
 
@@ -128,6 +141,7 @@ namespace polysolve::nonlinear
             file >> rules;
         else
             log_and_throw_error(logger, "unable to open {} rules", input_spec);
+#endif
 
         const bool valid_input = jse.verify_json(solver_params, rules);
 

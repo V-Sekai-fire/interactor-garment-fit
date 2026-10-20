@@ -176,6 +176,14 @@ target_compile_definitions(polysolve_linear PRIVATE POLYSOLVE_LINEAR_SPEC="${PRO
 target_compile_definitions(polysolve PRIVATE POLYSOLVE_NON_LINEAR_SPEC="${PROJECT_SOURCE_DIR}/nonlinear-solver-spec.json")
 target_compile_definitions(polysolve_linear PUBLIC POLYSOLVE_JSON_SPEC_DIR="${PROJECT_SOURCE_DIR}")
 
+# Take the solver rules from polysolve_embedded_spec(name), which the embedding
+# program defines, instead of reading the spec files above at run time.
+option(POLYSOLVE_EMBEDDED_SPECS "Read solver specs from polysolve_embedded_spec()" OFF)
+if(POLYSOLVE_EMBEDDED_SPECS)
+    target_compile_definitions(polysolve_linear PUBLIC POLYSOLVE_EMBEDDED_SPECS)
+    target_compile_definitions(polysolve PUBLIC POLYSOLVE_EMBEDDED_SPECS)
+endif()
+
 
 ################################################################################
 # Dependencies
