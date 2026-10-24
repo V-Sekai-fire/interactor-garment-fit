@@ -12,7 +12,7 @@ C++ and Slang under `kernels/`.
 ## Build
 
 There is no standalone build. `transport-meshing-pen` builds the guest from a workspace checkout,
-which places this repository beside the guest runtime and headers it links (RFD 2294).
+which places this repository beside the guest runtime and headers it links (RFD66606-2294).
 
 ## Licence
 
